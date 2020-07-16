@@ -11,8 +11,8 @@ namespace DAN_XLVI_Dejan_Prodanovic
     class Vehicles
     {
        
-        private SemaphoreSlim northSemaphore = new SemaphoreSlim(2,3);
-        private SemaphoreSlim southSemaphore = new SemaphoreSlim(0, 3);
+        private SemaphoreSlim northSemaphore = new SemaphoreSlim(2,5);
+        private SemaphoreSlim southSemaphore = new SemaphoreSlim(0, 5);
         public BackgroundWorker worker = new BackgroundWorker();
         int counter;
         

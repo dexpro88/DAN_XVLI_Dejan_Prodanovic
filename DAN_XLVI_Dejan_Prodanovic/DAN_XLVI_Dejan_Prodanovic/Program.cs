@@ -41,6 +41,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
                 Console.WriteLine("{0} {1}",
                vehicle.Key.Name, vehicle.Value);
             }
+            Console.WriteLine();
         }
         
     }
