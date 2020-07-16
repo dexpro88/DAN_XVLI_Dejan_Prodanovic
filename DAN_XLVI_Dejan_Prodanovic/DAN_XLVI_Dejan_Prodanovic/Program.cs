@@ -10,6 +10,10 @@ namespace DAN_XLVI_Dejan_Prodanovic
     {
         static void Main(string[] args)
         {
+            Vehicles veh = new Vehicles();
+            veh.GenerateVehicles();
+            Console.WriteLine("All vehicles crossed the bridge");
+            Console.ReadLine();
         }
     }
 }
