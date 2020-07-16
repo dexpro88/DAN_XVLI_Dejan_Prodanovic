@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,7 +10,17 @@ namespace DAN_XLVI_Dejan_Prodanovic
 {
     class Vehicles
     {
-        private SemaphoreSlim semaphore = new SemaphoreSlim(0, 3);
+       
+        private SemaphoreSlim northSemaphore = new SemaphoreSlim(2, 2);
+        private SemaphoreSlim southSemaphore = new SemaphoreSlim(0, 2);
+        public BackgroundWorker worker = new BackgroundWorker();
+        public Vehicles()
+        {
+            worker.DoWork += DoWork;
+        }
+        bool northSemaphoreON = true;
+        bool southSemaphoreON = false;
+
         public delegate void PrintInfo(Dictionary<Thread, string> dictionary);
         //List<Thread> vehicles = new List<Thread>();
         Dictionary<Thread,string> vehicles = new Dictionary<Thread, string>();
@@ -18,8 +29,8 @@ namespace DAN_XLVI_Dejan_Prodanovic
 
         public void GenerateVehicles(PrintInfo printInfo)
         {
-            int numberOfVehicles = rnd.Next(1,16);
-           
+            //int numberOfVehicles = rnd.Next(1,16);
+            int numberOfVehicles = 40;
 
             for (int i = 0; i < numberOfVehicles; i++)
             {
@@ -30,7 +41,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
                
                 vehicles.Add(thread,direction);              
             }
-
+            worker.RunWorkerAsync();
             printInfo(vehicles);
 
             foreach (KeyValuePair<Thread, string> veh in vehicles)
@@ -46,14 +57,51 @@ namespace DAN_XLVI_Dejan_Prodanovic
 
         public void CrossTheBridge(string direction)
         {
-            Console.WriteLine("{0} waits on the semaphore to cross the bridge ",Thread.CurrentThread.Name);
-               
-            semaphore.Wait();
+            Console.WriteLine("{0} waits on the semaphore ",Thread.CurrentThread.Name);
+
+            if (direction.Equals("north"))
+            {
+                northSemaphore.Wait();
+                    
+                    Console.WriteLine("{0} crosses the bridge. It goes north", Thread.CurrentThread.Name);
+
+                    Thread.Sleep(2000);
+
+                    northSemaphore.Release();
+
+                    //Console.WriteLine("Thread {0} releases the semaphore.", num);
+                    //Console.WriteLine("Thread {0} previous semaphore count: {1}",
+                    //    num, _pool.Release());
+                    //Console.WriteLine("Nesto moje: {0}", _pool.CurrentCount);
+                
+            }                 
             //Thread.Sleep(3000);
             //string vehicleName = Thread.CurrentThread.Name;
             //Console.WriteLine("{0} crossed the bridge", vehicleName);
         }
 
-       
+        public void DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (true)
+            {
+                //Console.WriteLine("\n\n\nradim nesto\n\n\n");
+                if (northSemaphoreON)
+                {
+                    northSemaphoreON = false;
+                    Thread.Sleep(200);
+                    southSemaphoreON = true;
+                }
+                else
+                {
+                    southSemaphoreON = false;
+                    Thread.Sleep(200);
+                    northSemaphoreON = true;
+                }
+                Thread.Sleep(1100);
+            }
+           
+        }
+
+
     }
 }

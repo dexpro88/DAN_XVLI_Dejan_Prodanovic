@@ -13,6 +13,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
         {
             Vehicles veh = new Vehicles();
             veh.GenerateVehicles(PrintVehiclesInfo);
+            //veh.worker.RunWorkerAsync();
             Console.WriteLine("All vehicles crossed the bridge");
             Console.ReadLine();
         }
