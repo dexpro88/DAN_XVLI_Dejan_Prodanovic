@@ -21,13 +21,16 @@ namespace DAN_XLVI_Dejan_Prodanovic
             endEvent.stopWatch.Start();
             veh.GenerateVehicles(PrintVehiclesInfo);
             
-            Console.WriteLine("All vehicles crossed the bridge\n");
+            Console.WriteLine("\nAll vehicles crossed the bridge\n");
 
             endEvent.stopWatch.Stop();
             endEvent.OnProgramEnded(endEvent.stopWatch.ElapsedMilliseconds);
             Console.ReadLine();
         }
-
+        /// <summary>
+        /// method that prints informations about vehicles and directions
+        /// </summary>
+        /// <param name="vehicles"></param>
         public static void PrintVehiclesInfo(Dictionary<Thread, string> vehicles)
         {
             Console.WriteLine("Total number of vehicles {0}", vehicles.Count);

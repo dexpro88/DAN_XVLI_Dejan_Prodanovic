@@ -18,9 +18,10 @@ namespace DAN_XLVI_Dejan_Prodanovic
         
         bool northSemaphoreON = true;
         bool southSemaphoreON = false;
-
+      
         public delegate void PrintInfo(Dictionary<Thread, string> dictionary);
-         
+
+        //dictionary that stores threads(that represent vehicles) and their directions
         Dictionary<Thread,string> vehicles = new Dictionary<Thread, string>();
         string[] directions = { "south","north"};
         Random rnd = new Random();
@@ -30,6 +31,12 @@ namespace DAN_XLVI_Dejan_Prodanovic
             worker.DoWork += DoWork;
         }
 
+        /// <summary>
+        /// method that generates random number of threads that represent vehicles
+        /// threads are parametrized  with CrossTheBridge method that gets random direction
+        /// ad parametar
+        /// </summary>
+        /// <param name="printInfo"></param>
         public void GenerateVehicles(PrintInfo printInfo)
         {
             int numberOfVehicles = rnd.Next(1, 16);
@@ -45,6 +52,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
                
                 vehicles.Add(thread,direction);              
             }
+            //we start background worker that will will be changing semaphor state on every 500 ms
             worker.RunWorkerAsync();
             printInfo(vehicles);
 
@@ -59,18 +67,25 @@ namespace DAN_XLVI_Dejan_Prodanovic
             }
         }
 
+        /// <summary>
+        /// method that represent crossing of bridge by vehicles
+        /// </summary>
+        /// <param name="direction"></param>
         public void CrossTheBridge(string direction)
         {
             Console.WriteLine("{0} waits on the semaphore ",Thread.CurrentThread.Name);
 
+
             if (direction.Equals("north"))
             {
+                //if direction parametar is "north" we use northSemaphore
                 northSemaphore.Wait();
                     
                Console.WriteLine("{0} crosses the bridge. It goes north", Thread.CurrentThread.Name);
 
                Thread.Sleep(500);
                counter--;
+                //northSemaphore is released if northSemaphoreON is true 
                 if (northSemaphoreON && northSemaphore.CurrentCount<2)
                 {
                     northSemaphore.Release();
@@ -79,6 +94,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
 
             } else if(direction.Equals("south"))
             {
+                //if the direction parametar is "south" we use southSemaphore 
                 southSemaphore.Wait();
 
                 Console.WriteLine("{0} crosses the bridge. It goes south", Thread.CurrentThread.Name);
@@ -92,7 +108,13 @@ namespace DAN_XLVI_Dejan_Prodanovic
             }           
             
         }
-
+        /// <summary>
+        /// DoWork method of background worker
+        /// it alternately changes state of southSemaphoreON and northSemaphoreON
+        /// and it alternately relases southSemaphore and northSemaphore
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void DoWork(object sender, DoWorkEventArgs e)
         {
             while (counter!=0)
