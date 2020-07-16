@@ -14,6 +14,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
         private SemaphoreSlim northSemaphore = new SemaphoreSlim(2, 2);
         private SemaphoreSlim southSemaphore = new SemaphoreSlim(0, 2);
         public BackgroundWorker worker = new BackgroundWorker();
+        int counter;
         public Vehicles()
         {
             worker.DoWork += DoWork;
@@ -31,6 +32,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
         {
             //int numberOfVehicles = rnd.Next(1,16);
             int numberOfVehicles = 40;
+            counter = numberOfVehicles;
 
             for (int i = 0; i < numberOfVehicles; i++)
             {
@@ -66,38 +68,54 @@ namespace DAN_XLVI_Dejan_Prodanovic
                     Console.WriteLine("{0} crosses the bridge. It goes north", Thread.CurrentThread.Name);
 
                     Thread.Sleep(2000);
+                    counter--;
+                    //northSemaphore.Release();
 
-                    northSemaphore.Release();
-
-                    //Console.WriteLine("Thread {0} releases the semaphore.", num);
-                    //Console.WriteLine("Thread {0} previous semaphore count: {1}",
-                    //    num, _pool.Release());
-                    //Console.WriteLine("Nesto moje: {0}", _pool.CurrentCount);
+                  
+                    
                 
-            }                 
-            //Thread.Sleep(3000);
-            //string vehicleName = Thread.CurrentThread.Name;
-            //Console.WriteLine("{0} crossed the bridge", vehicleName);
+            } else if(direction.Equals("south"))
+            {
+                southSemaphore.Wait();
+
+                Console.WriteLine("{0} crosses the bridge. It goes south", Thread.CurrentThread.Name);
+
+                Thread.Sleep(2000);
+                counter--;
+                //northSemaphore.Release();
+            }           
+            
         }
 
         public void DoWork(object sender, DoWorkEventArgs e)
         {
-            while (true)
+            while (counter!=0)
             {
                 //Console.WriteLine("\n\n\nradim nesto\n\n\n");
                 if (northSemaphoreON)
                 {
                     northSemaphoreON = false;
-                    Thread.Sleep(200);
+                    //Thread.Sleep(100);
                     southSemaphoreON = true;
+                   
+                    if (southSemaphore.CurrentCount==0)
+                    {
+                        southSemaphore.Release(2);
+                    }
+
                 }
                 else
                 {
                     southSemaphoreON = false;
-                    Thread.Sleep(200);
+                    //Thread.Sleep(500);
                     northSemaphoreON = true;
+                    if (northSemaphore.CurrentCount==0)
+                    {
+                        northSemaphore.Release(2);
+                    }
+                   
                 }
-                Thread.Sleep(1100);
+                Thread.Sleep(2100);
             }
            
         }
