@@ -11,27 +11,29 @@ namespace DAN_XLVI_Dejan_Prodanovic
     class Vehicles
     {
        
-        private SemaphoreSlim northSemaphore = new SemaphoreSlim(2, 2);
-        private SemaphoreSlim southSemaphore = new SemaphoreSlim(0, 2);
+        private SemaphoreSlim northSemaphore = new SemaphoreSlim(2,3);
+        private SemaphoreSlim southSemaphore = new SemaphoreSlim(0, 3);
         public BackgroundWorker worker = new BackgroundWorker();
         int counter;
-        public Vehicles()
-        {
-            worker.DoWork += DoWork;
-        }
+        
         bool northSemaphoreON = true;
         bool southSemaphoreON = false;
 
         public delegate void PrintInfo(Dictionary<Thread, string> dictionary);
-        //List<Thread> vehicles = new List<Thread>();
+         
         Dictionary<Thread,string> vehicles = new Dictionary<Thread, string>();
         string[] directions = { "south","north"};
         Random rnd = new Random();
 
+        public Vehicles()
+        {
+            worker.DoWork += DoWork;
+        }
+
         public void GenerateVehicles(PrintInfo printInfo)
         {
-            //int numberOfVehicles = rnd.Next(1,16);
-            int numberOfVehicles = 40;
+            int numberOfVehicles = rnd.Next(1, 16);
+            //int numberOfVehicles = 120;
             counter = numberOfVehicles;
 
             for (int i = 0; i < numberOfVehicles; i++)
@@ -65,24 +67,28 @@ namespace DAN_XLVI_Dejan_Prodanovic
             {
                 northSemaphore.Wait();
                     
-                    Console.WriteLine("{0} crosses the bridge. It goes north", Thread.CurrentThread.Name);
+               Console.WriteLine("{0} crosses the bridge. It goes north", Thread.CurrentThread.Name);
 
-                    Thread.Sleep(2000);
-                    counter--;
-                    //northSemaphore.Release();
+               Thread.Sleep(500);
+               counter--;
+                if (northSemaphoreON && northSemaphore.CurrentCount<2)
+                {
+                    northSemaphore.Release();
 
-                  
-                    
-                
+                }
+
             } else if(direction.Equals("south"))
             {
                 southSemaphore.Wait();
 
                 Console.WriteLine("{0} crosses the bridge. It goes south", Thread.CurrentThread.Name);
 
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
                 counter--;
-                //northSemaphore.Release();
+                if (southSemaphoreON && southSemaphore.CurrentCount<2)
+                {
+                    southSemaphore.Release();
+                }
             }           
             
         }
@@ -91,11 +97,11 @@ namespace DAN_XLVI_Dejan_Prodanovic
         {
             while (counter!=0)
             {
-                //Console.WriteLine("\n\n\nradim nesto\n\n\n");
+                
                 if (northSemaphoreON)
                 {
                     northSemaphoreON = false;
-                    //Thread.Sleep(100);
+                    
                     southSemaphoreON = true;
                    
                     if (southSemaphore.CurrentCount==0)
@@ -107,7 +113,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
                 else
                 {
                     southSemaphoreON = false;
-                    //Thread.Sleep(500);
+                    
                     northSemaphoreON = true;
                     if (northSemaphore.CurrentCount==0)
                     {
@@ -115,7 +121,7 @@ namespace DAN_XLVI_Dejan_Prodanovic
                     }
                    
                 }
-                Thread.Sleep(2100);
+                Thread.Sleep(500);
             }
            
         }

@@ -43,7 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EndProgramNotification.cs" />
+    <Compile Include="EventClass.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgramExecutionTimeArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vehicles.cs" />
   </ItemGroup>

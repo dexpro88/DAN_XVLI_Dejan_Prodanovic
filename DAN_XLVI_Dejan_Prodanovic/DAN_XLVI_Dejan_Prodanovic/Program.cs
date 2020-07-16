@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,12 +10,21 @@ namespace DAN_XLVI_Dejan_Prodanovic
 {
     class Program
     {
+         
         static void Main(string[] args)
         {
+          
             Vehicles veh = new Vehicles();
+            EventClass endEvent = new EventClass();
+            EndProgramNotification endProgramNotification = new EndProgramNotification();
+            endEvent.ProgramEnded += endProgramNotification.OnProgramEnded;
+            endEvent.stopWatch.Start();
             veh.GenerateVehicles(PrintVehiclesInfo);
-            //veh.worker.RunWorkerAsync();
-            Console.WriteLine("All vehicles crossed the bridge");
+            
+            Console.WriteLine("All vehicles crossed the bridge\n");
+
+            endEvent.stopWatch.Stop();
+            endEvent.OnProgramEnded(endEvent.stopWatch.ElapsedMilliseconds);
             Console.ReadLine();
         }
 
@@ -29,5 +39,6 @@ namespace DAN_XLVI_Dejan_Prodanovic
                vehicle.Key.Name, vehicle.Value);
             }
         }
+        
     }
 }
